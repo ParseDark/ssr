@@ -1,16 +1,15 @@
-// ./src/server/middlewares/react-ssr.js
-
-//完成 react ssr 工作的中间件,组件在服务端渲染的逻辑都在这个文件内
-
+//完成 react ssr 工作的中间件
 //引入Index 组件
 import React from 'react';
-//引入index 组件
-import Index from '../../client/pages/index';
+import Index from '../../client/pages';
 import { renderToString} from 'react-dom/server';
 
 export default  (ctx,next)=>{
 
-    const html = renderToString(<Index/>);
+    console.log('ctx.request.path', ctx.request.path);
+    console.log('ctx.request.url', ctx.request.url);
+
+    const html = renderToString(<Index />);
     ctx.body=`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +22,7 @@ export default  (ctx,next)=>{
     </div>
 </body>
 </html>
-<script type="text/javascript"  src="index.js"></script>//这里绑定了 index.js代码，浏览器会下载后执行
+<script type="text/javascript"  src="index.js"></script>
 `;
 
     return next();
