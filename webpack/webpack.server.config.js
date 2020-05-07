@@ -14,6 +14,12 @@ module.exports = {
         filename: 'app.js',
         path: resolvePath('../dist/server')
     },
+    resolve: {
+        alias: {
+            //定义 dist 目录别名，方便导入模块
+            '@dist': path.resolve(__dirname,'../dist')
+        }
+    },
     externals: [nodeExternals()],
     module: {
         rules: [{
@@ -22,5 +28,11 @@ module.exports = {
             exclude: /node_modules/
         }
         ]
-    }
+    },
+    plugins:[
+        new webpack.DefinePlugin({
+            'process.env': { NODE_ENV: `"${process.env.NODE_ENV}"`},
+            '__IS_PROD__':isProd
+        })
+    ]
 }

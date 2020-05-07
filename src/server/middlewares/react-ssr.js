@@ -14,7 +14,12 @@ import Layout from '../../client/app/layout';
 
 import matchRoute from '../../share/match-route';
 
-import App from '../../client/router/index';
+//导入资源处理库
+import  getAssets from '../common/assets';
+
+
+//得到静态资源
+const assetsMap = getAssets();
 
 export default  async (ctx,next)=>{
 
@@ -78,7 +83,7 @@ export default  async (ctx,next)=>{
     <meta charset="UTF-8">
     ${helmet.title.toString()}
     ${helmet.meta.toString()}
-     <link rel="stylesheet" type="text/css" href="/main.css" />
+    ${assetsMap.css.join('')}
     <meta name="keywords" content="${tdk.keywords}" />
     <meta name="description" content="${tdk.description}" />getInitialProps
 </head>
@@ -90,7 +95,8 @@ export default  async (ctx,next)=>{
     ${JSON.stringify(fetchResult)}
     </textarea>
 </body>
-</html><script type="text/javascript"  src="/index.js"></script>`;
+ ${assetsMap.js.join('')} 
+</html>`;
     await next();
     } catch (e) {
         console.log('error happen: ', e)
