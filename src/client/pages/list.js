@@ -2,15 +2,20 @@ import React from 'react';
 import {Link} from 'react-router-dom';
 //导入  - 假数据
 import tempData from './data';
+import { Helmet } from 'react-helmet';
 //组件
 export default class Index extends React.Component {
     constructor(props) {
         super(props);
-        const initialData = props.staticContext.initialData||{};
-        this.state=initialData;
+        const initData = props.initialData || {};
+        this.state={
+            page:initData.page,
+            fetchData:initData.fetchData
+        }
     }
-    //静态方法  数据预取方法
+
     static async  getInitialProps() {
+        console.log('fetch data');
         //模拟数据请求方法
         const fetchData=()=>{
             return new Promise(resolve=>{
@@ -25,24 +30,51 @@ export default class Index extends React.Component {
 
         let res = await fetchData();
 
-        return res;
+        return {
+            fetchData:res,
+            page:{
+                tdk:{
+                    title:'列表页 - react ssr',
+                    keywords:'前端技术江湖',
+                    description:'关键词'
+                }
+            }
+        };
     }
 
-    handlerClick(){
-        alert('一起来玩 react 服务端渲染');
+    componentDidMount(){
+        if(!this.state.fetchData){
+            //如果没有数据，则进行数据请求
+            Index.getInitialProps().then(res=>{
+                this.setState({
+                    fetchData:res.fetchData||[],
+                    page:res.page
+                });
+
+            })
+        }
     }
 
     render() {
-        //渲染逻辑
-        const {code,data}=this.state;
+        //渲染数据
+
+        const {code,data}=this.state.fetchData||{};
+        const {tdk={}} = this.state.page || {};
 
         return <div>
+
+            <Helmet>
+                <title>{tdk.title}</title>
+                <meta name="description" content={tdk.description}/>
+                <meta name="keywords" content={tdk.keywords}/>
+            </Helmet>
+
             {data && data.map((item,index)=>{
-            return <div key={index}>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-            </div>
-        })}
+                return <div key={index}>
+                    <h3>{item.title}</h3>
+                    <p>{item.desc}</p>
+                </div>
+            })}
             {!data&&<div>暂无数据</div>}
         </div>
     }

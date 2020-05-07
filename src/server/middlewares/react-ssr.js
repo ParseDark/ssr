@@ -3,9 +3,13 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 
-import { StaticRouter, Route, matchPath} from 'react-router';
+import { StaticRouter, Route} from 'react-router';
+
+import { Helmet } from 'react-helmet';
 
 import routeList from '../../client/router/route-config';
+
+import Layout from '../../client/app/layout';
 
 
 import matchRoute from '../../share/match-route';
@@ -34,28 +38,48 @@ export default  async (ctx,next)=>{
         fetchResult = await fetchDataFn();
     }
 
+    let { page } = fetchResult || {};
+
+    let tdk = {
+        title: '默认标题 - my react ssr',
+        keywords: '默认关键词',
+        description: '默认描述'};
+
+    if(page && page.tdk){
+        tdk=page.tdk;
+    }
+
     //将预取数据在这里传递过去 组内通过props.staticContext获取
     const context = {
         initialData: fetchResult
     };
 
+    //渲染的路由和数据
+    const props = {
+        routeList
+    }
+
     console.log('---> start render to string')
 
     try {
-
-    const html = await renderToString(<StaticRouter location={path} context={context}>
-            <App routeList={routeList}></App>
+        const html = renderToString(<StaticRouter>
+            <Layout><targetRoute.component initialData={fetchResult} ></targetRoute.component></Layout>
         </StaticRouter>);
 
-   console.log('data', context);
-   console.log('html')
-    console.log('html', html);
+        const helmet = Helmet.renderStatic();
 
-    ctx.body=`<!DOCTYPE html>
+        console.log('data', context);
+        console.log('html')
+        console.log('html', html);
+
+        ctx.body=`<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>my react ssr</title>
+    ${helmet.title.toString()} //直出到客户端
+    ${helmet.meta.toString()}
+    <meta name="keywords" content="${tdk.keywords}" />
+    <meta name="description" content="${tdk.description}" />getInitialProps
 </head>
 <body>
     <div id="root">
