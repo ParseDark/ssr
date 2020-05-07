@@ -1,6 +1,10 @@
 import React from 'react';
 import ReactDom from 'react-dom';
-import Index from '../pages';
+import App from '../router/index';
+import { BrowserRouter} from 'react-router-dom';
+import routeList from '../router/route-config';
 
-//渲染 index 组件 到页面
-ReactDom.hydrate(<Index />, document.getElementById('root'))
+//渲染路由
+ReactDom.hydrate(<BrowserRouter>
+        <App routeList={routeList} /></BrowserRouter>
+    , document.getElementById('root'))
