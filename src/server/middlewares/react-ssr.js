@@ -76,8 +76,9 @@ export default  async (ctx,next)=>{
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    ${helmet.title.toString()} //直出到客户端
+    ${helmet.title.toString()}
     ${helmet.meta.toString()}
+     <link rel="stylesheet" type="text/css" href="/main.css" />
     <meta name="keywords" content="${tdk.keywords}" />
     <meta name="description" content="${tdk.description}" />getInitialProps
 </head>

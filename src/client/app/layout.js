@@ -2,6 +2,8 @@
 import React from 'react';
 import { Link,NavLink } from 'react-router-dom';
 import {withRouter} from 'react-router';
+import './layout.scss';
+
 class Index extends React.Component{
     constructor(props){
         super(props);
@@ -9,10 +11,12 @@ class Index extends React.Component{
 
 
     render(){
-        return  <div><NavLink to="/index" style={{ marginLeft: "10px" }} >首页</NavLink>
-            <NavLink style={{ marginLeft: "10px" }} onClick={this.click}  to="/list">列表页</NavLink>
-            <NavLink to="/about" style={{ marginLeft: "10px" }} >关于</NavLink>
-            {this.props.children}</div>
+        return  <div className="layout-box">
+            <h1>koa+react+ssr</h1>
+            <NavLink to="/index" style={{ marginLeft: "10px" }} >首页</NavLink>
+            <NavLink style={{ marginLeft: "10px" }} to="/list">列表页</NavLink>
+            {this.props.children}
+        </div>
     }
 }
 //带入路由信息

@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-    Link
-} from 'react-router-dom';
-
+import './index.scss';
 import { Helmet } from 'react-helmet';
 
 export default class Index extends React.Component {
@@ -48,7 +45,7 @@ export default class Index extends React.Component {
 
     render() {
         const {tdk={}} = this.state.page || {};
-        return <div>
+        return <div className="page-index-box">
             <Helmet>
                 <title>{tdk.title}</title>
                 <meta name="description" content={tdk.description}/>
