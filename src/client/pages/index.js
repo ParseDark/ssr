@@ -51,6 +51,6 @@ export default class Index extends React.Component {
                 <meta name="description" content={tdk.description}/>
                 <meta name="keywords" content={tdk.keywords}/>
             </Helmet>
-            首页</div>
+            首页biubiubiu111</div>
     }
 }

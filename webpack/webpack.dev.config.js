@@ -9,11 +9,12 @@ const resolvePath = (pathstr) => path.resolve(__dirname, pathstr);
 module.exports = {
     mode: 'development',
     entry: {
-        main: resolvePath('../src/client/app/index.js'),
+        main:['react-hot-loader/patch',resolvePath('../src/client/app/index.js')] //入口文件
     },//入口文件
     output: {
         filename: '[name].js', //设置打包后的文件名
-        path: resolvePath('../dist/static')//设置构建结果的输出目录
+        path: resolvePath('../dist/static'),//设置构建结果的输出目录
+        publicPath: 'http://localhost:9002/',
     },
     module: {
         rules: [{

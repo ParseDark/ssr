@@ -88,9 +88,7 @@ export default  async (ctx,next)=>{
     <meta name="description" content="${tdk.description}" />getInitialProps
 </head>
 <body>
-    <div id="root">
-       ${html}
-    </div>
+    <div id="root">${html}</div>
     <textarea id="ssrTextInitData" style="display:none;">
     ${JSON.stringify(fetchResult)}
     </textarea>

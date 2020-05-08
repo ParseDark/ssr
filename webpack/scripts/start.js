@@ -10,7 +10,9 @@ const nodeServerPort = proConfig.nodeServerPort;
 log(chalk.red('servers starting....'));
 
 //前端代码构建 服务进程
-const feCodeWatchProcess = spawn('npm', ['run', 'fe:watch'],{stdio:'inherit'});
+// const feCodeWatchProcess = spawn('npm', ['run', 'fe:watch'],{stdio:'inherit'});
+//增加 wds 监听
+const feCodeWatchProcess = spawn('npm', ['run', 'wds:watch'], { stdio: 'inherit' });
 
 //服务端代码监控和编译进程
 const svrCodeWatchProcess = spawn('npm', ['run', 'svr:watch']);

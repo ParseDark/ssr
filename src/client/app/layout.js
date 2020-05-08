@@ -1,7 +1,8 @@
-
 import React from 'react';
 import { Link,NavLink } from 'react-router-dom';
 import {withRouter} from 'react-router';
+import { hot } from 'react-hot-loader/root';
+
 import './layout.scss';
 
 class Index extends React.Component{
@@ -19,5 +20,5 @@ class Index extends React.Component{
         </div>
     }
 }
-//带入路由信息
-export default withRouter(Index);
+
+export default hot(Index);
