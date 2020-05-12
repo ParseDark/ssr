@@ -1,6 +1,5 @@
 import React from 'react';
-import Index from '../pages/index';
-import List from '../pages/list';
+import AsyncLoader from "../components/AsyncBundleHC";
 
 function pageNotFound() {
     return <div>404页面</div>
@@ -9,12 +8,12 @@ function pageNotFound() {
 export default [
     {
         path:'/index',
-        component:Index,
-        exact: true
+        component: AsyncLoader(() => import(/*webpackChunkName:"chunk-index"*/'../pages/index')),
+        exact:true
     },
     {
         path: '/list',
-        component:List,
+        component: AsyncLoader(() => import('../pages/list')),
         exact: true
     },
     {
@@ -22,6 +21,5 @@ export default [
         component: pageNotFound,
         exact: true
     }
-
 ]
 

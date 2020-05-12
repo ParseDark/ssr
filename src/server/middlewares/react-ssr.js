@@ -9,10 +9,11 @@ import { Helmet } from 'react-helmet';
 
 import routeList from '../../client/router/route-config';
 
-import Layout from '../../client/app/layout';
-
+import App from '../../client/router/index';
 
 import matchRoute from '../../share/match-route';
+
+import getStaticRoutes from "../../share/getStaticRoutes";
 
 //导入资源处理库
 import  getAssets from '../common/assets';
@@ -23,6 +24,7 @@ const assetsMap = getAssets();
 
 export default  async (ctx,next)=>{
 
+    try {
     const path = ctx.request.path;
 
     if(path.indexOf('.')>-1){
@@ -32,9 +34,12 @@ export default  async (ctx,next)=>{
 
     console.log('ctx.request.path.', ctx.request.path);
 
+    const staticRoutesList = await getStaticRoutes(routeList);
+
     //查找到的目标路由对象
-    let matchResult = matchRoute(path,routeList);
-    let targetRoute=matchResult;
+    let matchResult = matchRoute(path, staticRoutesList);
+    debugger
+    let {targetRoute}=matchResult;
 
     //得到数据
     let fetchDataFn = targetRoute.component.getInitialProps;
@@ -66,9 +71,12 @@ export default  async (ctx,next)=>{
 
     console.log('---> start render to string')
 
-    try {
-        const html = renderToString(<StaticRouter>
-            <Layout><targetRoute.component initialData={fetchResult} ></targetRoute.component></Layout>
+
+        // const html = renderToString(<StaticRouter >
+        //     <Layout><targetRoute.component initialData={fetchResult} ></targetRoute.component></Layout>
+        // </StaticRouter>);
+        const html = renderToString(<StaticRouter location={path} context={context}>
+            <App routeList={staticRoutesList}></App>
         </StaticRouter>);
 
         const helmet = Helmet.renderStatic();
