@@ -18,6 +18,8 @@ import getStaticRoutes from "../../share/getStaticRoutes";
 //导入资源处理库
 import  getAssets from '../common/assets';
 
+import proConfig from '../../share/pro-config';
+
 
 //得到静态资源
 const assetsMap = getAssets();
@@ -35,18 +37,21 @@ export default  async (ctx,next)=>{
     console.log('ctx.request.path.', ctx.request.path);
 
     const staticRoutesList = await getStaticRoutes(routeList);
-
     //查找到的目标路由对象
     let matchResult = matchRoute(path, staticRoutesList);
-    debugger
-    let {targetRoute}=matchResult;
-
-    //得到数据
-    let fetchDataFn = targetRoute.component.getInitialProps;
-    let fetchResult = {};
-    if(fetchDataFn){
-        fetchResult = await fetchDataFn();
+    let { targetRoute, targetMatch } = matchResult;
+    console.log('targetMatch', targetMatch);
+    //得到数据;
+        let fetchResult = {};
+    let fetchDataFn;
+    if (targetRoute){
+        fetchDataFn = targetRoute.component ?targetRoute.component.getInitialProps:null;
+        if (fetchDataFn) {
+            fetchResult = await fetchDataFn();
+        }
     }
+
+    console.log('getinitData', targetRoute, '---> ')
 
     let { page } = fetchResult || {};
 
@@ -63,6 +68,7 @@ export default  async (ctx,next)=>{
     const context = {
         initialData: fetchResult
     };
+    console.log('ssr static data', context);
 
     //渲染的路由和数据
     const props = {
@@ -101,6 +107,9 @@ export default  async (ctx,next)=>{
     ${JSON.stringify(fetchResult)}
     </textarea>
 </body>
+<script>
+window.__IS__SSR__=${proConfig.__IS_SSR__};
+</script>
  ${assetsMap.js.join('')} 
 </html>`;
     await next();

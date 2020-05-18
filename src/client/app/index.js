@@ -20,6 +20,7 @@ function renderDom(routeList) {
 
 function clientRender(routeList) {
     let initialData = JSON.parse(document.getElementById('ssrTextInitData').value);
+    window.__INITIAL_DATA__ = initialData || {};
 
     //查找路由
     let matchResult = matchRoute(document.location.pathname, routeList);
@@ -28,11 +29,15 @@ function clientRender(routeList) {
         //设置组件初始化数据
         targetRoute.initialData = initialData;
         //等待异步脚本加载完成
-        if (targetRoute.component && targetRoute.component().props.flag === proConfig.asyncComponentKey) {
+        debugger
+        if (targetRoute.component && targetRoute.component.name === 'asyncFn') {
             targetRoute.component().props.load().then(res => {
                 //异步组件加载完成后再渲染页面
-                console.log('异步组件加载我能成.....');
+                console.log('异步组件加载完成.');
+                //设置已加载完的组件，否则需要重新请求
+                targetRoute.component = res?res.default:null;
                 renderDom(routeList);
+
             });
         }
 

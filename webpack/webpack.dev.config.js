@@ -1,6 +1,7 @@
 // ./webpack/webpack.dev.config.js
 
 const path = require('path');
+const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 //定一个通用的路径转换方法
@@ -49,7 +50,13 @@ module.exports = {
     plugins: [
         new MiniCssExtractPlugin({
             filename: '[name].css' //设置名称
-        })],
+        }),
+        new webpack.DefinePlugin({
+            'process.env': { NODE_ENV: '"development"' },
+            '__IS_PROD__': false,
+            '__SERVER__': false
+        })
+    ],
     optimization: {
         splitChunks: {
             cacheGroups: {

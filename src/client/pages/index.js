@@ -1,56 +1,34 @@
+
 import React from 'react';
 import './index.scss';
-import { Helmet } from 'react-helmet';
+import PageContainer from '../common/components/page-container';
 
-export default class Index extends React.Component {
-    constructor(props) {
-        super(props);
-        const initData = props.initialData || {};
-        this.state={
-            page:initData.page,
-            fetchData:initData.fetchData
-        }
-    }
-
-    static async  getInitialProps() {
-        console.log('fetch data index');
-        //模拟数据请求方法
-        //...
-
-        return {
-            page:{
-                tdk:{
-                    title:'首页 - react ssr',
-                    keywords:'前端技术江湖',
-                    description:'描述'
-                }
-            }
-        };
-    }
-
-    componentDidMount() {
-        if (!this.state.fetchData) {
-            //如果没有数据，则进行数据请求
-            Index.getInitialProps().then(res => {
-                this.setState({
-                    fetchData: res.fetchData || [],
-                    page:res.page
-                });
-
-            })
-        }
-    }
+import fetchGetList from '../common/fetch/get-list';
 
 
-
-    render() {
-        const {tdk={}} = this.state.page || {};
-        return <div className="page-index-box">
-            <Helmet>
-                <title>{tdk.title}</title>
-                <meta name="description" content={tdk.description}/>
-                <meta name="keywords" content={tdk.keywords}/>
-            </Helmet>
-            首页biubiubiu111</div>
-    }
+function Index(props) {
+    console.log('props',props);
+    const { fetchData } = props.initialData||{};
+    return <div className="page-index-box">
+        <p>首页</p>
+    </div>
 }
+
+Index.getInitialProps = async (ctx) => {
+
+    let res = await fetchGetList();
+    let data = res.code === 0 ? res.data : [];
+
+    return {
+        fetchData: data,
+        page: {
+            tdk: {
+                title: '首页 - koa-react-ssr',
+                keywords: '关键词 - koa-react-ssr',
+                description: '描述'
+            }
+        }
+    };
+}
+
+export default PageContainer(Index);

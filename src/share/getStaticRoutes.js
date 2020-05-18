@@ -4,8 +4,8 @@ import proConfig from '../share/pro-config';
 
 
 const checkIsAsyncRoute = (component) => {
-    console.log('component.name', component[proConfig.asyncComponentKey]);
-    return component[proConfig.asyncComponentKey];
+    console.log('component.name', component.name === 'asyncFn');
+    return component.name === 'asyncFn';
 }
 
 //将路由转换为静态路由
@@ -19,7 +19,6 @@ async function getStaticRoutes(routes) {
     let len = routes.length,
         i = 0;
     const staticRoutes = [];
-
     for (; i < len; i++) {
         let item = routes[i];
         if (checkIsAsyncRoute(item.component)) {

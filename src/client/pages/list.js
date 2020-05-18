@@ -1,20 +1,16 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-//导入  - 假数据
+
 import tempData from './data';
-import { Helmet } from 'react-helmet';
+
+import PageContainer from '../common/components/page-container';
+
 //组件
-export default class Index extends React.Component {
+class Index extends React.Component {
     constructor(props) {
         super(props);
-        const initData = props.initialData || {};
-        this.state={
-            page:initData.page,
-            fetchData:initData.fetchData
-        }
     }
 
-    static async  getInitialProps() {
+    static async  getInitialProps(ctx) {
         console.log('fetch data');
         //模拟数据请求方法
         const fetchData=()=>{
@@ -29,7 +25,6 @@ export default class Index extends React.Component {
         }
 
         let res = await fetchData();
-
         return {
             fetchData:res,
             page:{
@@ -42,33 +37,12 @@ export default class Index extends React.Component {
         };
     }
 
-    componentDidMount(){
-        if(!this.state.fetchData){
-            //如果没有数据，则进行数据请求
-            Index.getInitialProps().then(res=>{
-                this.setState({
-                    fetchData:res.fetchData||[],
-                    page:res.page
-                });
-
-            })
-        }
-    }
-
     render() {
         //渲染数据
-
-        const {code,data}=this.state.fetchData||{};
-        const {tdk={}} = this.state.page || {};
+        const {fetchData,page} = this.props.initialData;
+        const { code, data } = fetchData||{};
 
         return <div>
-
-            <Helmet>
-                <title>{tdk.title}</title>
-                <meta name="description" content={tdk.description}/>
-                <meta name="keywords" content={tdk.keywords}/>
-            </Helmet>
-
             {data && data.map((item,index)=>{
                 return <div key={index}>
                     <h3>{item.title}</h3>
@@ -78,5 +52,6 @@ export default class Index extends React.Component {
             {!data&&<div>暂无数据</div>}
         </div>
     }
-
 }
+
+export default PageContainer(Index);
