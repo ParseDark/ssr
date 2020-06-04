@@ -39,17 +39,13 @@ module.exports = {
             exclude: /node_modules/
         },{
             test: /\.(sa|sc|c)ss$/,
-            use: [
-                {
-                    loader: MiniCssExtractPlugin.loader,
-                },
+            use: ['isomorphic-style-loader',
                 {
                     loader: "css-loader",
-                },{
-                    loader: "postcss-loader"
-                }, {
-                    loader: "sass-loader"
-                }
+                    options: {
+                        importLoaders: 2
+                    }
+                }, 'postcss-loader', 'sass-loader'
             ]
         },{
             test: /\.(png|jpg|gif)$/,
@@ -64,9 +60,7 @@ module.exports = {
     },
 
     plugins: [
-        new MiniCssExtractPlugin({
-            filename:'css/[name].[contenthash:8].css'
-        }),
+        new webpack.HashedModuleIdsPlugin(),
         // 清理上一次构建的文件
         new CleanWebpackPlugin(),
         //生成 manifest 方便定位对应的资源文件

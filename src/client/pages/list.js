@@ -1,8 +1,10 @@
 import React from 'react';
 
 import tempData from './data';
+import  css from './index.scss'
 
 import PageContainer from '../common/components/page-container';
+import withStyles from 'isomorphic-style-loader/withStyles';
 
 //组件
 class Index extends React.Component {
@@ -44,7 +46,7 @@ class Index extends React.Component {
 
         return <div>
             {data && data.map((item,index)=>{
-                return <div key={index}>
+                return <div key={index} className="book-list">
                     <h3>{item.title}</h3>
                     <p>{item.desc}</p>
                 </div>
@@ -54,4 +56,4 @@ class Index extends React.Component {
     }
 }
 
-export default PageContainer(Index);
+export default withStyles(css)(PageContainer(Index));

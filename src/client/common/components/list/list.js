@@ -1,12 +1,12 @@
 //list 组件
 import React from 'react';
 import { Link } from 'react-router-dom';
-import './index.scss';
+import css from './index.scss';
 
 import PageContainer from '../../common/components/page-container';
 
 
-export default class Index extends React.Component {
+ class Index extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -27,3 +27,5 @@ export default class Index extends React.Component {
         </div>
     }
 }
+
+export default Index;

@@ -7,6 +7,8 @@ import { StaticRouter, Route} from 'react-router';
 
 import { Helmet } from 'react-helmet';
 
+import StyleContext from 'isomorphic-style-loader/StyleContext';
+
 import routeList from '../../client/router/route-config';
 
 import App from '../../client/router/index';
@@ -20,9 +22,6 @@ import  getAssets from '../common/assets';
 
 import proConfig from '../../share/pro-config';
 
-
-//得到静态资源
-const assetsMap = getAssets();
 
 export default  async (ctx,next)=>{
 
@@ -78,18 +77,30 @@ export default  async (ctx,next)=>{
     console.log('---> start render to string')
 
 
-        // const html = renderToString(<StaticRouter >
-        //     <Layout><targetRoute.component initialData={fetchResult} ></targetRoute.component></Layout>
-        // </StaticRouter>);
+        const css = new Set() // CSS for all rendered React components
+        const insertCss = (...styles) => styles.forEach(style => css.add(style._getContent()));
+
+
         const html = renderToString(<StaticRouter location={path} context={context}>
+            <StyleContext.Provider value={{ insertCss }} >
             <App routeList={staticRoutesList}></App>
+            </StyleContext.Provider>
         </StaticRouter>);
 
         const helmet = Helmet.renderStatic();
 
-        console.log('data', context);
-        console.log('html')
-        console.log('html', html);
+        const styles = [];
+        [...css].forEach(item => {
+            let [mid, content] = item[0];
+            styles.push(`<style id="s${mid}-0">${content}</style>`)
+        });
+
+        //静态资源
+        const assetsMap = getAssets();
+        // console.log('data', context);
+        // console.log('html')
+        // console.log('html', html);
+        console.log('css', styles);
 
         ctx.body=`<!DOCTYPE html>
 <html lang="en">
@@ -98,6 +109,7 @@ export default  async (ctx,next)=>{
     ${helmet.title.toString()}
     ${helmet.meta.toString()}
     ${assetsMap.css.join('')}
+    ${styles.join('')}
     <meta name="keywords" content="${tdk.keywords}" />
     <meta name="description" content="${tdk.description}" />getInitialProps
 </head>

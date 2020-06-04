@@ -24,18 +24,14 @@ module.exports = {
             exclude: /node_modules/
         },{
             test: /\.(sa|sc|c)ss$/,
-            use: [
-                {
-                    loader: MiniCssExtractPlugin.loader,
-                },
+            use: ['isomorphic-style-loader',
                 {
                     loader: "css-loader",
-                },{
-                    loader: "postcss-loader"
-                }, {
-                    loader: "sass-loader"
-                }
-            ]
+                    options: {
+                        importLoaders: 2
+                    }
+                }, 'postcss-loader', 'sass-loader'
+            ],
         },{
             test: /\.(png|jpg|gif)$/,
             use: [{

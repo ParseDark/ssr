@@ -26,6 +26,16 @@ module.exports = {
             test: /\.jsx?$/,
             loader: 'babel-loader',
             exclude: /node_modules/
+        },{
+            test: /\.(sa|sc|c)ss$/,
+            use: ['isomorphic-style-loader',
+                {
+                    loader: "css-loader",
+                    options: {
+                        importLoaders: 2
+                    }
+                }, 'postcss-loader', 'sass-loader'
+            ],
         }
         ]
     },
