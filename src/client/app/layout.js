@@ -1,19 +1,21 @@
 import React from 'react';
-import { Link,NavLink } from 'react-router-dom';
-import {withRouter} from 'react-router';
+import { Link, NavLink } from 'react-router-dom';
+import { withRouter } from 'react-router';
 import { hot } from 'react-hot-loader/root';
+import withStyles from 'isomorphic-style-loader/withStyles'
+
 
 
 import css from './layout.scss';
 
-class Index extends React.Component{
-    constructor(props){
+class Index extends React.Component {
+    constructor(props) {
         super(props);
     }
 
 
-    render(){
-        return  <div className="layout-box">
+    render() {
+        return <div className="layout-box">
             <h1>koa+react+ssr</h1>
             <NavLink to="/index" style={{ marginLeft: "10px" }} >首页</NavLink>
             <NavLink style={{ marginLeft: "10px" }} to="/list">列表页</NavLink>
@@ -22,4 +24,4 @@ class Index extends React.Component{
     }
 }
 
-export default hot(Index);
+export default withStyles(css)(hot(Index));

@@ -10,18 +10,26 @@ import matchRoute from '../../share/match-route';
 import proConfig from '../../share/pro-config';
 import StyleContext from 'isomorphic-style-loader/StyleContext';
 
+import { Provider } from 'react-redux';
+import getStore from '../../share/redux/store';
+
 const insertCss = (...styles) => {
     const removeCss = styles.map(style => style._insertCss());//客户端执行，插入style
     return () => removeCss.forEach(dispose => dispose());//组件卸载时 移除当前的 style 标签
 }
 
-function renderDom(routeList) {
+function renderDom(routeList, initialData) {
+    const store = getStore(initialData);
+    window.__STORE__ = store;
     //渲染index
-    ReactDom.hydrate(<BrowserRouter>
-        <StyleContext.Provider value={{ insertCss }}>
-            <App routeList={routeList} />
-        </StyleContext.Provider>
-    </BrowserRouter>
+    ReactDom.hydrate(
+        <Provider store={store}>
+            <BrowserRouter>
+                <StyleContext.Provider value={{ insertCss }}>
+                    <App routeList={routeList} />
+                </StyleContext.Provider>
+            </BrowserRouter>
+        </Provider>
         , document.getElementById('root'))
 }
 
@@ -42,8 +50,8 @@ function clientRender(routeList) {
                 //异步组件加载完成后再渲染页面
                 console.log('异步组件加载完成.');
                 //设置已加载完的组件，否则需要重新请求
-                targetRoute.component = res?res.default:null;
-                renderDom(routeList);
+                targetRoute.component = res ? res.default : null;
+                renderDom(routeList, initialData);
 
             });
         }

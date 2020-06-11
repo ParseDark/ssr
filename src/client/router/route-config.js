@@ -7,13 +7,18 @@ function pageNotFound() {
 
 export default [
     {
-        path:'/index',
+        path: '/index',
         component: AsyncLoader(() => import(/*webpackChunkName:"chunk-index"*/'../pages/index')),
-        exact:true
+        exact: true
     },
     {
         path: '/list',
-        component: AsyncLoader(() => import('../pages/list')),
+        component: AsyncLoader(() => import(/*webpackChunkName:"chunk-index"*/'../pages/list/list')),
+        exact: true
+    },
+    {
+        path: '/about',
+        component: AsyncLoader(() => import(/*webpackChunkName:"chunk-index"*/'../pages/about')),
         exact: true
     },
     {
