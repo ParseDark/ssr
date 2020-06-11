@@ -30,81 +30,93 @@ import getStore from '../../share/redux/store';
 export default async (ctx, next) => {
 
     try {
-        const path = ctx.request.path;
-
-        if (path.indexOf('.') > -1) {
-            ctx.body = null;
-            return next();
-        }
-
-        console.log('ctx.request.path.', ctx.request.path);
-
-        const staticRoutesList = await getStaticRoutes(routeList);
-        //查找到的目标路由对象
-        let matchResult = matchRoute(path, staticRoutesList);
-        let { targetRoute, targetMatch } = matchResult;
-
-        //得到 store,默认没有数据
-        const store = getStore();
-
-        //进行数据预取，更新 store 内的数据
-        let fetchDataFn, fetchResult = {};
-        if (targetRoute) {
-            fetchDataFn = targetRoute.component ? targetRoute.component.getInitialProps : null;
-            if (fetchDataFn) {
-                fetchResult = await fetchDataFn({ store });//更新 state 
-            }
-        }
-
-        console.log('getinitData', targetRoute, '---> ')
-
-        let { page } = fetchResult || {};
-
+        let html = "";//组件渲染结果
         let tdk = {
             title: '默认标题 - my react ssr',
             keywords: '默认关键词',
             description: '默认描述'
-        };
-
-        if (page && page.tdk) {
-            tdk = page.tdk;
         }
+        let helmet = {
+            title: '',
+            meta: ''
+        };
+        let assetsMap = {
+            js: [],
+            css: []
+        };
+        let styles = [];
+        let fetchDataFn, fetchResult = {};
 
-        //将预取数据在这里传递过去 组内通过props.staticContext获取
-        const context = {};
-        console.log('ssr static data', context);
+        if (proConfig.__IS_SSR__) {
+            const path = ctx.request.path;
 
-        console.log('---> start render to string')
+            if (path.indexOf('.') > -1) {
+                ctx.body = null;
+                return next();
+            }
+
+            console.log('ctx.request.path.', ctx.request.path);
+
+            const staticRoutesList = await getStaticRoutes(routeList);
+            //查找到的目标路由对象
+            let matchResult = matchRoute(path, staticRoutesList);
+            let { targetRoute, targetMatch } = matchResult;
+
+            //得到 store,默认没有数据
+            const store = getStore();
+
+            //进行数据预取，更新 store 内的数据
+            if (targetRoute) {
+                fetchDataFn = targetRoute.component ? targetRoute.component.getInitialProps : null;
+                if (fetchDataFn) {
+                    fetchResult = await fetchDataFn({ store });//更新 state 
+                }
+            }
+
+            console.log('getinitData', targetRoute, '---> ')
+
+            let { page } = fetchResult || {};
+
+            if (page && page.tdk) {
+                tdk = page.tdk;
+            }
+
+            //将预取数据在这里传递过去 组内通过props.staticContext获取
+            const context = {};
+            console.log('ssr static data', context);
+
+            console.log('---> start render to string')
 
 
-        const css = new Set() // CSS for all rendered React components
-        const insertCss = (...styles) => styles.forEach(style => css.add(style._getContent()));
+            const css = new Set() // CSS for all rendered React components
+            const insertCss = (...styles) => styles.forEach(style => css.add(style._getContent()));
 
-        const html = renderToString(
-            <Provider store={store}>
-                <StaticRouter location={path} context={context}>
-                    <StyleContext.Provider value={{ insertCss }} >
-                        <App routeList={staticRoutesList}></App>
-                    </StyleContext.Provider>
-                </StaticRouter>
-            </Provider>
-        );
+            html = renderToString(
+                <Provider store={store}>
+                    <StaticRouter location={path} context={context}>
+                        <StyleContext.Provider value={{ insertCss }} >
+                            <App routeList={staticRoutesList}></App>
+                        </StyleContext.Provider>
+                    </StaticRouter>
+                </Provider>
+            );
 
-        const helmet = Helmet.renderStatic();
-        console.log("helmet is -> ", helmet);
+            helmet = Helmet.renderStatic();
+            console.log("helmet is -> ", helmet);
 
-        const styles = [];
-        [...css].forEach(item => {
-            let [mid, content] = item[0];
-            styles.push(`<style id="s${mid}-0">${content}</style>`)
-        });
+            [...css].forEach(item => {
+                let [mid, content] = item[0];
+                styles.push(`<style id="s${mid}-0">${content}</style>`)
+            });
 
+
+        }
         //静态资源
-        const assetsMap = getAssets();
-        // console.log('data', context);
-        // console.log('html')
-        // console.log('html', html);
+        assetsMap = getAssets();
         console.log('css', styles);
+
+        console.log("assetsMap\n", assetsMap)
+        console.log("styles\n", styles)
 
         ctx.body = `<!DOCTYPE html>
 <html lang="en">
